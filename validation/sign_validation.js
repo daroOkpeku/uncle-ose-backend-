@@ -7,4 +7,9 @@ const signup_check = [
     check('password', 'Password must be greater than 8 with symbol and a number').isLength({min:8, max:20}).matches(/^[A-Za-z0-9 #$@^&*.,'!&]+$/),
 ]
 
-module.exports = {signup_check}
+
+const login_check = [
+    check('email', 'This email is required and must').exists().isEmail().normalizeEmail(),
+    check('password', 'Password must be greater than 8 with symbol and a number').isLength({min:8, max:20}).matches(/^[A-Za-z0-9 #$@^&*.,'!&]+$/),
+]
+module.exports = {signup_check, login_check}

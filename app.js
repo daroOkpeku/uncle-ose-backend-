@@ -2,26 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const sequelize = require("sequelize")
 const Config = require("./config");
- const {Register} = require("./Controller/MainController")
-const {signup_check} = require("./validation/sign_validation");
+ const {Register, Login} = require("./Controller/MainController")
+const {signup_check, login_check} = require("./validation/sign_validation");
+const { checkauth } = require("./Middleware/checkauth")
 const app = express();
 
 // this allow the url that can use the backend
 const corsOption = {
     origin:"*",
 }
-// Config.development
-// const seq = new sequelize('uncle_ose', 'root', '', {
-//     host: '127.0.0.1',
-//     dialect:'mysql'
-// });
-
-//  seq.authenticate().then(res=>{
-//     console.log('Database connection established successfully.');
-
-//  }).catch(err=>{
-//     console.error('Unable to connect to the database:', err);
-//  })
 
 
 app.use(cors(corsOption));
@@ -36,7 +25,10 @@ app.get("/", (request, response)=>{
 
 // sign_validation
 app.post('/register', signup_check, Register)
-
+app.post('/login', login_check, Login)
+app.get('/protected', checkauth, (request,  response)=>{
+  response.json({ message: 'This is a protected route.' });
+});
 const port = process.env.PORT || 3030
 
 app.listen(port, ()=>{
