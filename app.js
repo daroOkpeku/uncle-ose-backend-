@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const sequelize = require("sequelize")
 const Config = require("./config");
- const {Register, Login} = require("./Controller/MainController")
+ const {Register, Login, Logout} = require("./Controller/MainController")
 const {signup_check, login_check} = require("./validation/sign_validation");
 const { checkauth } = require("./Middleware/checkauth")
 const app = express();
@@ -26,9 +26,13 @@ app.get("/", (request, response)=>{
 // sign_validation
 app.post('/register', signup_check, Register)
 app.post('/login', login_check, Login)
+app.get('/logout', checkauth, Logout)
 app.get('/protected', checkauth, (request,  response)=>{
   response.json({ message: 'This is a protected route.' });
 });
+
+
+
 const port = process.env.PORT || 3030
 
 app.listen(port, ()=>{

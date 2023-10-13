@@ -4,6 +4,7 @@ const {validationResult} = require("express-validator")
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt")
 const loggedUsers = new Set();
+const blacklistedtoken = new Set();
 // https://github.com/daroOkpeku/food-rev-api/blob/master/src/controllers/UserController.js
 const Register = async(request, response)=>{
    const error = validationResult(request);
@@ -55,5 +56,52 @@ const Login  = async(request, response)=>{
    }
 }
 
+const Logout = (request, response)=>{
+  // blacklistedtoken.add(request.headers.authorization)
+   //response.json({message:request.headers.authorization})
+   const token = request.headers.authorization
+   const arrtoken = token.split(" "); 
+   try {
+      if(token && arrtoken[0] == "Bearer"){
+         jwt.verify(arrtoken[1], 'OSEOKPEKU', (err, decoded) => {
+            if (err) {
+              return response.status(401).json({ message: 'Invalid token' });
+            }
+              loggedUsers.delete(decoded.id)
+              blacklistedtoken.add(arrtoken[1])
+             return response.json({message:'you have successfully logout'})
+        })
+      }
+    
+   } catch (error) {
+      
+   }
+}
 
-module.exports = {Register, Login, loggedUsers, jwt}
+
+
+
+// // Route for user logout
+// app.post('/logout', (req, res) => {
+//    const { token } = req.body;
+ 
+//    // Verify and decode the token to get the username.
+//    jwt.verify(token, secretKey, (err, decoded) => {
+//      if (err) {
+//        return res.status(401).json({ message: 'Invalid token' });
+//      }
+ 
+//      const username = decoded.username;
+ 
+//      // Check if the user is in the Set and remove them if they are.
+//      if (loggedUsers.has(username)) {
+//        loggedUsers.delete(username);
+//        res.json({ message: `User ${username} logged out successfully.` });
+//      } else {
+//        res.status(404).json({ message: `User ${username} not found in the logged-in users Set.` });
+//      }
+//    });
+//  });
+
+
+module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken}
