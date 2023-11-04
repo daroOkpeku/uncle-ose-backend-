@@ -4,7 +4,8 @@ const {validationResult} = require("express-validator")
 const Comment = require("../Model/Comment")
 const pusher = require("../Pusher/Pusher")
 const jwt = require('jsonwebtoken');
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const Story = require("../Model/Stories");
 const loggedUsers = new Set();
 const blacklistedtoken = new Set();
 // https://github.com/daroOkpeku/food-rev-api/blob/master/src/controllers/UserController.js
@@ -92,9 +93,27 @@ const Chat = (request, response)=>{
    pusher.trigger('chat', 'comment', {
       message:request.body
    })
-   response.json([{success:request.body}]);
+   response.json([{success:"you have successfully commented"}]);
   // console.log(request.body)
 
 }
+const poststories = (request, response)=>{
+  try {
+   if(request.user.id == 1 && request.user.email == 'stephen@gmail.com'){
+      Story.create({
+         title:"",
+         bodyone:"",
+         bodytwo:"",
+         quotation:"",
+         references:"",
+         UserId:"",
+         status:1
+      })
+      response.json([{success:"you have created a story"}]);
+   }
+  } catch (error) {
+   response.json([{success:"you are not Authorizated to use the api"}]);
+  }
+}
 
-module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken, Chat}
+module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken, Chat, poststories}
