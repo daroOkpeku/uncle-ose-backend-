@@ -1,6 +1,8 @@
 const { response } = require("express");
 const Auth_signup = require("../Model/Sign_up")
 const {validationResult} = require("express-validator")
+const Comment = require("../Model/Comment")
+const pusher = require("../Pusher/Pusher")
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt")
 const loggedUsers = new Set();
@@ -80,28 +82,19 @@ const Logout = (request, response)=>{
 
 
 
+const Chat = (request, response)=>{
+   Comment.create({
+      fullname:request.body.fullname,
+      email:request.body.email,
+      comments:request.body.comments,
+      userId:request.body.id,
+   })
+   pusher.trigger('chat', 'comment', {
+      message:request.body
+   })
+   response.json([{success:request.body}]);
+  // console.log(request.body)
 
-// // Route for user logout
-// app.post('/logout', (req, res) => {
-//    const { token } = req.body;
- 
-//    // Verify and decode the token to get the username.
-//    jwt.verify(token, secretKey, (err, decoded) => {
-//      if (err) {
-//        return res.status(401).json({ message: 'Invalid token' });
-//      }
- 
-//      const username = decoded.username;
- 
-//      // Check if the user is in the Set and remove them if they are.
-//      if (loggedUsers.has(username)) {
-//        loggedUsers.delete(username);
-//        res.json({ message: `User ${username} logged out successfully.` });
-//      } else {
-//        res.status(404).json({ message: `User ${username} not found in the logged-in users Set.` });
-//      }
-//    });
-//  });
+}
 
-
-module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken}
+module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken, Chat}
