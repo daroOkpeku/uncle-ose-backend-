@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const sequelize = require("sequelize")
 const Config = require("./config");
- const {Register, Login, Logout, Chat, poststories} = require("./Controller/MainController")
+ const {Register, Login, Logout, Chat, poststories, allstories} = require("./Controller/MainController")
 const {signup_check, login_check} = require("./validation/sign_validation");
 const { checkauth } = require("./Middleware/checkauth")
 const app = express();
@@ -29,6 +29,7 @@ app.post('/login', login_check, Login)
 app.post('/comment', Chat)
 app.get('/logout', checkauth, Logout)
 app.post('/stories', checkauth, poststories)
+app.get('/allstories', allstories);
 app.get('/protected', checkauth, (request,  response)=>{
   response.json({ message: `This is a protected route.` });
 });

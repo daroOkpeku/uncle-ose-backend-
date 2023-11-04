@@ -116,4 +116,23 @@ const poststories = (request, response)=>{
   }
 }
 
-module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken, Chat, poststories}
+const allstories = async(request, response)=>{
+// /stories?page=1&perPage=10
+   try {
+      const pageNumber = parseInt(request.query.page) || 1;
+      const itemsPerPage =  10;
+
+      const offset = (pageNumber - 1) * itemsPerPage;
+
+      let stories = await Story.findAll({
+         offset,
+         limit:itemsPerPage
+      });
+        response.json({success:stories})
+   } catch (error) {
+        response.json({error:'there is an error'})
+   }
+
+}
+
+module.exports = {Register, Login, loggedUsers, jwt, Logout, blacklistedtoken, Chat, poststories, allstories}
